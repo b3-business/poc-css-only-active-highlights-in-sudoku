@@ -1,0 +1,206 @@
+/**
+ * Grid Definition & Animation Area
+ */
+
+@keyframes simpleZoom {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/**
+ * These Classes will be set by JS
+ */
+
+.animate-fast {
+  /* --delay MUST be a number, bc. it's used with calc()*/
+  --delay: 0.3;
+  /* --duration MUST be a <time>, bc. it's used directly in animation timing function*/
+  --duration: 0.3s;
+}
+
+.animate-slow {
+  --delay: 1;
+  --duration: 1s;
+}
+
+.grid {
+  /* --grid-cols defined in js */
+  /* --grid-rows defined in js */
+
+  display: grid;
+  /*grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));*/
+  grid-template-columns: repeat(var(--grid-cols), 1fr);
+  width: max-content;
+  height: max-content;
+  grid-gap: 8px;
+
+  --activeRow: 0;
+  --activeColumn: 0;
+  --activeCube: 0;
+}
+
+.tile {
+  /* Active Row */
+  --isNotRowHighlight: min(
+    calc((var(--activeRow) - var(--row)) * (var(--activeRow) - var(--row))),
+    1
+  );
+  --isRowHighlight: calc(1 - var(--isNotRowHighlight));
+
+  /* Active Column */
+  --isNotColHighlight: min(
+    calc(
+      (var(--activeColumn) - var(--column)) *
+        (var(--activeColumn) - var(--column))
+    ),
+    1
+  );
+  --isColHighlight: calc(1 - var(--isNotColHighlight));
+
+  /* Active Cube */
+  --isNotCubeHighlight: min(
+    calc((var(--activeCube) - var(--cube)) * (var(--activeCube) - var(--cube))),
+    1
+  );
+  --isCubeHighlight: calc(1 - var(--isNotCubeHighlight));
+
+  /* Is Active */
+  /* --isActive: min(
+    calc(var(--isRowHighlight) + var(--isColHighlight)+ var(--isCubeHighlight)),
+    1
+  );*/
+
+  /* prettier-ignore */
+  --isActive: calc(
+    1 -
+      (
+        (1 - var(--isRowHighlight)) * 
+        (1 - var(--isColHighlight)) *
+        (1 - var(--isCubeHighlight))
+      )
+  );
+  --isNotActive: calc(1 - var(--isActive));
+
+  /* Hack from: https://dev.to/siddharthshyniben/conditional-logic-with-css-the-css-custom-property-trick-44hb
+  and: https://lea.verou.me/2020/10/the-var-space-hack-to-toggle-multiple-values-with-one-custom-property/?
+  --isActive: ;
+  --highlight-Color: var(--isActive) rgba(0, 0, 255, 1);
+  background-color: var(--highlight-Color, var(--defaultColor));
+  */
+
+  /* activeRow - row = 0, wenn active row*/
+  --defaultColor: rgba(180, 180, 180, 1);
+
+  /*background-color: rgba(0,0,255 * isActive + 80 * isNotActive + 50 * isActiveIndex ); = Pseudocode*/
+  --r: calc(180 * var(--isNotActive) + calc(0 * var(--isActive)));
+  --g: calc(180 * var(--isNotActive) + calc(0 * var(--isActive)));
+  --b: calc(180 * var(--isNotActive) + calc(255 * var(--isActive)));
+  --a: 1;
+  background-color: rgba(var(--r), var(--g), var(--b), var(--a));
+
+  text-align: center;
+  width: 5vh;
+  height: 5vh;
+}
+
+.tile::after {
+  content: 'IsActive: ' var(--isActive);
+}
+
+/**
+ * Animation Group coloring
+ * Only for debugging, animation will be directly calculated for all cells
+
+.tile[data-diagonalAnimationGroup='0'],
+.tile[data-diagonalAnimationGroup='5'] {
+  background-color: #ff9f1c;
+}
+.tile[data-diagonalAnimationGroup='1'],
+.tile[data-diagonalAnimationGroup='6'] {
+  background-color: #ffbf69;
+}
+.tile[data-diagonalAnimationGroup='2'],
+.tile[data-diagonalAnimationGroup='7'] {
+  background-color: #ffe6a7;
+}
+.tile[data-diagonalAnimationGroup='3'],
+.tile[data-diagonalAnimationGroup='8'] {
+  background-color: #cbf3f0;
+}
+.tile[data-diagonalAnimationGroup='4'],
+.tile[data-diagonalAnimationGroup='9'] {
+  background-color: #2ec4b6;
+}
+ */
+
+/**
+ * Body Definitions
+ */
+
+body {
+  position: relative;
+}
+
+h1,
+h2 {
+  font-family: Lato;
+}
+
+.toolbar {
+  margin-bottom: 10px;
+}
+
+/**
+ * CSS Custom Property Typings
+ */
+@property --index {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+/* --delay MUST be a number, bc. it's used with calc()*/
+@property --delay {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0;
+}
+
+/* --duration MUST be a <time>, bc. it's used directly in animation timing function*/
+@property --duration {
+  syntax: '<time>';
+  inherits: true;
+  initial-value: 1s;
+}
+
+@property --element-count {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --grid-cols {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --grid-rows {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+/**
+ * Used for setting the correct animation delay for all diagonal cells
+ * see calculation in index.ts
+ */
+@property --diagonal-animation-group {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
