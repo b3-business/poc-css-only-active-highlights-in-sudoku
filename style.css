@@ -2,7 +2,7 @@
  * Grid Definition Area
  */
 
-.grid {
+ .grid {
   display: grid;
   /*grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));*/
   grid-template-columns: repeat(var(--grid-cols), 1fr);
@@ -68,13 +68,6 @@
   );
   --isNotActive: calc(1 - var(--isActive));
 
-  /* Hack from: https://dev.to/siddharthshyniben/conditional-logic-with-css-the-css-custom-property-trick-44hb
-  and: https://lea.verou.me/2020/10/the-var-space-hack-to-toggle-multiple-values-with-one-custom-property/?
-  --isActive: ;
-  --highlight-Color: var(--isActive) rgba(0, 0, 255, 1);
-  background-color: var(--highlight-Color, var(--defaultColor));
-  */
-
   /* activeRow - row = 0, wenn active row*/
   --defaultColor: rgba(180, 180, 180, 1);
 
@@ -120,50 +113,53 @@ h2 {
 /**
  * CSS Custom Property Typings
  */
+
+/* Props on each tile */
+@property --row {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --column {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --cube {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 0;
+}
+
 @property --index {
   syntax: '<number>';
   inherits: false;
   initial-value: 0;
 }
 
-/* --delay MUST be a number, bc. it's used with calc()*/
-@property --delay {
+/* Props on grid */
+@property --activeRow {
   syntax: '<number>';
   inherits: true;
   initial-value: 0;
 }
 
-/* --duration MUST be a <time>, bc. it's used directly in animation timing function*/
-@property --duration {
-  syntax: '<time>';
+@property --activeColumn {
+  syntax: '<number>';
   inherits: true;
-  initial-value: 1s;
-}
-
-@property --element-count {
-  syntax: '<number>';
-  inherits: false;
   initial-value: 0;
 }
 
-@property --grid-cols {
+@property --activeCube {
   syntax: '<number>';
-  inherits: false;
+  inherits: true;
   initial-value: 0;
 }
 
-@property --grid-rows {
+@property --activeIndex {
   syntax: '<number>';
-  inherits: false;
-  initial-value: 0;
-}
-
-/**
- * Used for setting the correct animation delay for all diagonal cells
- * see calculation in index.ts
- */
-@property --diagonal-animation-group {
-  syntax: '<number>';
-  inherits: false;
+  inherits: true;
   initial-value: 0;
 }
