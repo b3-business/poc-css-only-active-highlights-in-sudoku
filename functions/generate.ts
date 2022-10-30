@@ -24,12 +24,6 @@ export function generateTiles(
     const elem = document.createElement('div');
     elem.classList.add('tile');
 
-    // Calc + Set CSS vars
-    elem.style.setProperty('--index', `${i}`);
-
-    const diagonalOverflow = Math.floor(i / gridCols);
-    const diagonalAnimationGroup = diagonalOverflow + (i % gridCols);
-
     // Sudoku Vars
     const row = Math.floor(i / 9);
     const column = i % 9;
@@ -38,6 +32,7 @@ export function generateTiles(
     elem.style.setProperty('--row', `${row}`);
     elem.style.setProperty('--column', `${column}`);
     elem.style.setProperty('--cube', `${cube}`);
+    elem.style.setProperty('--index', `${i}`);
 
     elem.addEventListener('click', (event: MouseEvent) => {
       const target = event.target as HTMLDivElement;
@@ -47,11 +42,12 @@ export function generateTiles(
       const row = elem.style.getPropertyValue('--row');
       const column = elem.style.getPropertyValue('--column');
       const cube = elem.style.getPropertyValue('--cube');
+      const index = elem.style.getPropertyValue('--index');
 
       grid.style.setProperty('--activeRow', `${row}`);
       grid.style.setProperty('--activeColumn', `${column}`);
       grid.style.setProperty('--activeCube', `${cube}`);
-      grid.style.setProperty('--activeIndex', `${cube}`);
+      grid.style.setProperty('--activeIndex', `${index}`);
     });
 
     elem.innerText = `Tile ${i}`;

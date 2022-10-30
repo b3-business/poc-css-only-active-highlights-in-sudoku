@@ -1,36 +1,8 @@
 /**
- * Grid Definition & Animation Area
+ * Grid Definition Area
  */
-
-@keyframes simpleZoom {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/**
- * These Classes will be set by JS
- */
-
-.animate-fast {
-  /* --delay MUST be a number, bc. it's used with calc()*/
-  --delay: 0.3;
-  /* --duration MUST be a <time>, bc. it's used directly in animation timing function*/
-  --duration: 0.3s;
-}
-
-.animate-slow {
-  --delay: 1;
-  --duration: 1s;
-}
 
 .grid {
-  /* --grid-cols defined in js */
-  /* --grid-rows defined in js */
-
   display: grid;
   /*grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));*/
   grid-template-columns: repeat(var(--grid-cols), 1fr);
@@ -41,6 +13,7 @@
   --activeRow: 0;
   --activeColumn: 0;
   --activeCube: 0;
+  --activeIndex: 0;
 }
 
 .tile {
@@ -68,6 +41,15 @@
   );
   --isCubeHighlight: calc(1 - var(--isNotCubeHighlight));
 
+  /* Active Index */
+  --isNotActiveIndex: min(
+    calc(
+      (var(--activeIndex) - var(--index)) * (var(--activeIndex) - var(--index))
+    ),
+    1
+  );
+  --isActiveIndex: calc(1 - var(--isNotActiveIndex));
+
   /* Is Active */
   /* --isActive: min(
     calc(var(--isRowHighlight) + var(--isColHighlight)+ var(--isCubeHighlight)),
@@ -76,12 +58,13 @@
 
   /* prettier-ignore */
   --isActive: calc(
-    1 -
+    (1 -
       (
         (1 - var(--isRowHighlight)) * 
         (1 - var(--isColHighlight)) *
         (1 - var(--isCubeHighlight))
       )
+    ) * var(--isNotActiveIndex)
   );
   --isNotActive: calc(1 - var(--isActive));
 
@@ -95,10 +78,16 @@
   /* activeRow - row = 0, wenn active row*/
   --defaultColor: rgba(180, 180, 180, 1);
 
-  /*background-color: rgba(0,0,255 * isActive + 80 * isNotActive + 50 * isActiveIndex ); = Pseudocode*/
-  --r: calc(180 * var(--isNotActive) + calc(0 * var(--isActive)));
-  --g: calc(180 * var(--isNotActive) + calc(0 * var(--isActive)));
-  --b: calc(180 * var(--isNotActive) + calc(255 * var(--isActive)));
+  /* prettier-ignore */
+  --r: calc(180 * var(--isNotActive) + calc(60 * var(--isActive)) + calc(255 * var(--isActiveIndex)) );
+
+  /* prettier-ignore */
+  --g: calc(180 * var(--isNotActive) + calc(100 * var(--isActive)) + calc(255 * var(--isActiveIndex)) );
+
+  /* prettier-ignore */
+  --b: calc(180 * var(--isNotActive) + calc(255 * var(--isActive)) + calc(0 * var(--isActiveIndex)) );
+
+  /* prettier-ignore */
   --a: 1;
   background-color: rgba(var(--r), var(--g), var(--b), var(--a));
 
@@ -110,32 +99,6 @@
 .tile::after {
   content: 'IsActive: ' var(--isActive);
 }
-
-/**
- * Animation Group coloring
- * Only for debugging, animation will be directly calculated for all cells
-
-.tile[data-diagonalAnimationGroup='0'],
-.tile[data-diagonalAnimationGroup='5'] {
-  background-color: #ff9f1c;
-}
-.tile[data-diagonalAnimationGroup='1'],
-.tile[data-diagonalAnimationGroup='6'] {
-  background-color: #ffbf69;
-}
-.tile[data-diagonalAnimationGroup='2'],
-.tile[data-diagonalAnimationGroup='7'] {
-  background-color: #ffe6a7;
-}
-.tile[data-diagonalAnimationGroup='3'],
-.tile[data-diagonalAnimationGroup='8'] {
-  background-color: #cbf3f0;
-}
-.tile[data-diagonalAnimationGroup='4'],
-.tile[data-diagonalAnimationGroup='9'] {
-  background-color: #2ec4b6;
-}
- */
 
 /**
  * Body Definitions
